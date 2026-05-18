@@ -4,11 +4,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.set_page_config(
-    page_title="Análisis de Frecuencias - Wine Quality",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+# Configuración de página simple, sin diseño especial
 
 @st.cache_data
 def load_data():
@@ -121,25 +117,19 @@ def plot_frequency_polygon(table, title):
 
 
 def main():
-    st.title("Análisis de Frecuencias - Dataset de Calidad de Vino")
-    st.markdown(
-        "Esta aplicación utiliza el archivo `winequalityN.csv` para calcular y mostrar tablas de frecuencias, gráficos de barras, pastel/polar, frecuencia acumulada, polígono de frecuencias y estadísticas descriptivas."
-    )
+    st.title("Análisis feo de frecuencias")
+    st.write("Esta app usa `winequalityN.csv` para hacer cálculos de frecuencias y gráficos sin muchas florituras.")
 
     df = load_data()
 
-    with st.expander("Descripción del problema y del dataset", expanded=True):
-        st.markdown(
-            "- El dataset contiene características químicas y de calidad de vinos blancos y tintos.\n"
-            "- El enfoque de esta página es mostrar cómo se distribuye una variable elegida mediante frecuencias absolutas, relativas, acumuladas y un polígono de frecuencias.\n"
-            "- Se incluyen además la media, mediana y moda para apoyar el análisis estadístico."
-        )
+    st.write("Descripción:")
+    st.write("El dataset tiene vinos y sus características químicas y de calidad.")
+    st.write("Se muestran frecuencias absolutas, relativas, acumuladas y polígono de frecuencias.")
 
-    st.sidebar.header("Controles de análisis")
-    column = st.sidebar.selectbox("Seleccione una variable", df.columns.tolist(), index=df.columns.get_loc("quality") if "quality" in df.columns else 0)
-    chart_type = st.sidebar.radio("Tipo de gráfico relativo", ["Pastel", "Polar"])
-    bins = st.sidebar.slider("Número de intervalos (solo para variables numéricas)", min_value=4, max_value=15, value=8)
-    show_data = st.sidebar.checkbox("Mostrar datos crudos", value=False)
+    column = st.selectbox("Seleccione una variable", df.columns.tolist(), index=df.columns.get_loc("quality") if "quality" in df.columns else 0)
+    chart_type = st.radio("Tipo de gráfico relativo", ["Pastel", "Polar"])
+    bins = st.slider("Número de intervalos (variables numéricas)", min_value=4, max_value=15, value=8)
+    show_data = st.checkbox("Mostrar datos crudos")
 
     if show_data:
         st.subheader("Vista preliminar de los datos")
@@ -164,7 +154,7 @@ def main():
     st.markdown("### Tabla de frecuencias")
     st.dataframe(freq_table)
 
-    st.markdown("### Estadísticas descriptivas")
+    st.write("### Estadísticas descriptivas")
     if is_numeric:
         stats = numeric_statistics(series)
     else:
@@ -172,34 +162,17 @@ def main():
     stats_df = pd.DataFrame.from_dict(stats, orient="index", columns=["Valor"])
     st.table(stats_df)
 
-    col1, col2 = st.columns(2)
+    st.write("#### Frecuencias absolutas")
+    st.pyplot(plot_absolute_frequency(freq_table, "Frecuencia absoluta"))
 
-    with col1:
-        st.markdown("#### Frecuencias absolutas")
-        st.pyplot(plot_absolute_frequency(freq_table, "Frecuencia absoluta"))
+    st.write("#### Frecuencias relativas")
+    st.pyplot(plot_relative_frequency(freq_table, "Frecuencia relativa", chart_type))
 
-    with col2:
-        st.markdown("#### Frecuencias relativas")
-        st.pyplot(plot_relative_frequency(freq_table, "Frecuencia relativa", chart_type))
+    st.write("#### Frecuencia acumulada")
+    st.pyplot(plot_cumulative_frequency(freq_table, "Frecuencia acumulada"))
 
-    col3, col4 = st.columns(2)
-    with col3:
-        st.markdown("#### Frecuencia acumulada")
-        st.pyplot(plot_cumulative_frequency(freq_table, "Frecuencia acumulada"))
-
-    with col4:
-        st.markdown("#### Polígono de frecuencias")
-        st.pyplot(plot_frequency_polygon(freq_table, "Polígono de frecuencias"))
-
-    st.markdown("---")
-    st.markdown(
-        "## Conclusiones rápidas"
-        "\n- Las frecuencias absolutas muestran cuántas observaciones caen en cada categoría o intervalo."
-        "\n- Las frecuencias relativas permiten comparar proporciones cuando se trabaja con diferentes tamaños de muestra."
-        "\n- La frecuencia acumulada ayuda a ver cómo se acumula la información a través de las clases."
-        "\n- El polígono de frecuencias es útil para visualizar tendencias de la distribución."
-    )
-
+    st.write("#### Polígono de frecuencias")
+    st.pyplot(plot_frequency_polygon(freq_table, "Polígono de frecuencias"))
 if __name__ == "__main__":
     main()
 
