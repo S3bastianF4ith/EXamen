@@ -117,14 +117,14 @@ def plot_frequency_polygon(table, title):
 
 
 def main():
-    st.title("Análisis feo de frecuencias")
-    st.write("Esta app usa `winequalityN.csv` para hacer cálculos de frecuencias y gráficos sin muchas florituras.")
+    st.title("Análisis básico de frecuencias")
+    st.write("Uso `winequalityN.csv` para calcular y mostrar frecuencias y gráficos de forma sencilla.")
 
     df = load_data()
 
-    st.write("Descripción:")
-    st.write("El dataset tiene vinos y sus características químicas y de calidad.")
-    st.write("Se muestran frecuencias absolutas, relativas, acumuladas y polígono de frecuencias.")
+    st.write("Explicación rápida:")
+    st.write("El dataset contiene vinos y algunas mediciones químicas y de calidad.")
+    st.write("Aquí se ven las frecuencias absolutas, relativas, acumuladas y el polígono de frecuencias.")
 
     column = st.selectbox("Seleccione una variable", df.columns.tolist(), index=df.columns.get_loc("quality") if "quality" in df.columns else 0)
     chart_type = st.radio("Tipo de gráfico relativo", ["Pastel", "Polar"])
@@ -173,6 +173,16 @@ def main():
 
     st.write("#### Polígono de frecuencias")
     st.pyplot(plot_frequency_polygon(freq_table, "Polígono de frecuencias"))
+
+    st.markdown("---")
+    st.markdown(
+        "## Conclusiones rápidas"
+        "\n- Las frecuencias absolutas muestran cuántas observaciones caen en cada categoría o intervalo."
+        "\n- Las frecuencias relativas permiten comparar proporciones cuando se trabaja con diferentes tamaños de muestra."
+        "\n- La frecuencia acumulada ayuda a ver cómo se acumula la información a través de las clases."
+        "\n- El polígono de frecuencias es útil para visualizar tendencias de la distribución."
+    )
+
 if __name__ == "__main__":
     main()
 
