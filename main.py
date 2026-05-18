@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Configuración de página simple, sin diseño especial
+plt.style.use("seaborn-v0_8-darkgrid")
 
 @st.cache_data
 def load_data():
@@ -117,44 +117,35 @@ def plot_frequency_polygon(table, title):
 
 
 def main():
-    st.title("Análisis básico de frecuencias")
-    st.write("Uso `winequalityN.csv` para calcular y mostrar frecuencias y gráficos de forma sencilla.")
+    st.title("Análisis de frecuencias")
+    st.write("Selecciona una variable y mira las tablas y gráficos con este CSV.")
 
     df = load_data()
 
-    st.write("Explicación rápida:")
-    st.write("El dataset contiene vinos y algunas mediciones químicas y de calidad.")
-    st.write("Aquí se ven las frecuencias absolutas, relativas, acumuladas y el polígono de frecuencias.")
-
-    column = st.selectbox("Seleccione una variable", df.columns.tolist(), index=df.columns.get_loc("quality") if "quality" in df.columns else 0)
-    chart_type = st.radio("Tipo de gráfico relativo", ["Pastel", "Polar"])
-    bins = st.slider("Número de intervalos (variables numéricas)", min_value=4, max_value=15, value=8)
-    show_data = st.checkbox("Mostrar datos crudos")
+    column = st.selectbox(
+        "Variable:",
+        df.columns.tolist(),
+        index=df.columns.get_loc("quality") if "quality" in df.columns else 0,
+    )
+    chart_type = st.radio("Gráfico relativo:", ["Pastel", "Polar"])
+    bins = st.slider("Intervalos (numérico):", min_value=4, max_value=15, value=8)
+    show_data = st.checkbox("Mostrar algunos datos")
 
     if show_data:
-        st.subheader("Vista preliminar de los datos")
         st.dataframe(df.head(20))
-
-    st.subheader(f"Análisis de la variable: {column}")
 
     series = df[column].dropna()
     is_numeric = pd.api.types.is_numeric_dtype(series)
 
     if is_numeric:
-        st.markdown(
-            "La variable seleccionada es numérica. Se agrupa en intervalos para calcular la distribución de frecuencias."
-        )
         freq_table = build_frequency_table(series, bins=bins)
     else:
-        st.markdown(
-            "La variable seleccionada es categórica. Se calcula la distribución de frecuencias por categoría."
-        )
         freq_table = build_frequency_table(series)
 
-    st.markdown("### Tabla de frecuencias")
+    st.write("### Tabla de frecuencias")
     st.dataframe(freq_table)
 
-    st.write("### Estadísticas descriptivas")
+    st.write("### Estadísticas")
     if is_numeric:
         stats = numeric_statistics(series)
     else:
@@ -174,15 +165,7 @@ def main():
     st.write("#### Polígono de frecuencias")
     st.pyplot(plot_frequency_polygon(freq_table, "Polígono de frecuencias"))
 
-    st.markdown("---")
-    st.markdown(
-        "## Conclusiones rápidas"
-        "\n- Las frecuencias absolutas muestran cuántas observaciones caen en cada categoría o intervalo."
-        "\n- Las frecuencias relativas permiten comparar proporciones cuando se trabaja con diferentes tamaños de muestra."
-        "\n- La frecuencia acumulada ayuda a ver cómo se acumula la información a través de las clases."
-        "\n- El polígono de frecuencias es útil para visualizar tendencias de la distribución."
-    )
-
 if __name__ == "__main__":
     main()
+
 
