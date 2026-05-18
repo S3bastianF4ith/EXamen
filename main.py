@@ -70,22 +70,14 @@ def plot_absolute_frequency(table, title):
     return fig
 
 
-def plot_relative_frequency(table, title, chart_type):
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={"projection": "polar"} if chart_type == "Polar" else {})
+def plot_relative_frequency(table, title):
+    fig, ax = plt.subplots(figsize=(6, 6))
     labels = table["Categoría"].tolist()
     sizes = table["Frecuencia relativa"].tolist()
 
-    if chart_type == "Pastel":
-        ax.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140, wedgeprops={"edgecolor": "white"})
-        ax.axis("equal")
-        ax.set_title(title)
-    else:
-        angles = [i * 2 * math.pi / len(sizes) for i in range(len(sizes))]
-        bars = ax.bar(angles, sizes, width=2 * math.pi / len(sizes), bottom=0.0, color="#ff7f0e", alpha=0.8)
-        ax.set_xticks(angles)
-        ax.set_xticklabels(labels, rotation=45, ha="right")
-        ax.set_ylim(0, max(sizes) * 1.15)
-        ax.set_title(title, pad=20)
+    ax.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140, wedgeprops={"edgecolor": "white"})
+    ax.axis("equal")
+    ax.set_title(title)
 
     plt.tight_layout()
     return fig
@@ -127,7 +119,6 @@ def main():
         df.columns.tolist(),
         index=df.columns.get_loc("quality") if "quality" in df.columns else 0,
     )
-    chart_type = st.radio("Gráfico relativo:", ["Pastel", "Polar"])
     bins = st.slider("Intervalos (numérico):", min_value=4, max_value=15, value=8)
     show_data = st.checkbox("Mostrar algunos datos")
 
@@ -143,7 +134,7 @@ def main():
         freq_table = build_frequency_table(series)
 
     st.write("### Tabla de frecuencias")
-    st.dataframe(freq_table)
+    st.table(freq_table)
 
     st.write("### Estadísticas")
     if is_numeric:
@@ -157,7 +148,7 @@ def main():
     st.pyplot(plot_absolute_frequency(freq_table, "Frecuencia absoluta"))
 
     st.write("#### Frecuencias relativas")
-    st.pyplot(plot_relative_frequency(freq_table, "Frecuencia relativa", chart_type))
+    st.pyplot(plot_relative_frequency(freq_table, "Frecuencia relativa"))
 
     st.write("#### Frecuencia acumulada")
     st.pyplot(plot_cumulative_frequency(freq_table, "Frecuencia acumulada"))
@@ -167,5 +158,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
