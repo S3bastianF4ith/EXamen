@@ -114,6 +114,7 @@ def main():
     else:
         estadisticas = estadisticas_categoricas(serie)
     tabla_estadisticas = pd.DataFrame.from_dict(estadisticas, orient="index", columns=["Valor"])
+    tabla_estadisticas["Valor"] = tabla_estadisticas["Valor"].astype(str)
     st.table(tabla_estadisticas)
     st.pyplot(graficar_frecuencia_absoluta(tabla_frecuencias, "Frecuencia absoluta"))
     st.pyplot(graficar_frecuencia_relativa(tabla_frecuencias, "Frecuencia relativa"))
