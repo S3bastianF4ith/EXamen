@@ -39,7 +39,7 @@ def estadisticas_numericas(serie):
     return {
         "Media": serie.mean(),
         "Mediana": serie.median(),
-        "Moda": serie.mode().iloc[0] if not serie.mode().empty else float("nan"),
+        "Moda": serie.mode().iloc[0],
         "Mínimo": serie.min(),
         "Máximo": serie.max(),
         "Desviación estándar": serie.std(ddof=1),
