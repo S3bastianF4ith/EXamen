@@ -48,7 +48,7 @@ def estadisticas_numericas(serie):
 def estadisticas_categoricas(serie):
     moda = serie.mode()
     return {
-        "Moda": moda.iloc[0] if not moda.empty else "N/A",
+        "Moda": moda.iloc[0],
         "Número de categorías": serie.nunique(),
         "Registro más frecuente": serie.value_counts().idxmax(),
     }
